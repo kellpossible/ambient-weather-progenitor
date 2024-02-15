@@ -349,7 +349,7 @@
                         "in": "query",
                         "description": "The maximum number of results to return (max: 288)",
                         "schema": {
-                            "type": "number",
+                            "type": "integer",
                             "default": 288
                         }
                     }

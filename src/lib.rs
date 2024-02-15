@@ -3,143 +3,109 @@ pub use progenitor_client::{ByteStream, Error, ResponseValue};
 use progenitor_client::{encode_path, RequestBuilderExt};
 #[allow(unused_imports)]
 use reqwest::header::{HeaderMap, HeaderValue};
-/// Types used as operation parameters and responses.
-#[allow(clippy::all)]
 pub mod types {
     use serde::{Deserialize, Serialize};
     #[allow(unused_imports)]
     use std::convert::TryFrom;
-    /// Error types.
-    pub mod error {
-        /// Error from a TryFrom or FromStr implementation.
-        pub struct ConversionError(std::borrow::Cow<'static, str>);
-        impl std::error::Error for ConversionError {}
-        impl std::fmt::Display for ConversionError {
-            fn fmt(
-                &self,
-                f: &mut std::fmt::Formatter<'_>,
-            ) -> Result<(), std::fmt::Error> {
-                std::fmt::Display::fmt(&self.0, f)
-            }
-        }
-        impl std::fmt::Debug for ConversionError {
-            fn fmt(
-                &self,
-                f: &mut std::fmt::Formatter<'_>,
-            ) -> Result<(), std::fmt::Error> {
-                std::fmt::Debug::fmt(&self.0, f)
-            }
-        }
-        impl From<&'static str> for ConversionError {
-            fn from(value: &'static str) -> Self {
-                Self(value.into())
-            }
-        }
-        impl From<String> for ConversionError {
-            fn from(value: String) -> Self {
-                Self(value.into())
-            }
-        }
-    }
     ///ListUsersDevicesResponseItem
     ///
     /// <details><summary>JSON schema</summary>
     ///
     /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "properties": {
-    ///    "info": {
-    ///      "type": "object",
-    ///      "properties": {
-    ///        "location": {
-    ///          "type": "string"
-    ///        },
-    ///        "name": {
-    ///          "type": "string"
-    ///        }
-    ///      }
-    ///    },
-    ///    "lastData": {
-    ///      "type": "object",
-    ///      "properties": {
-    ///        "baromabsin": {
-    ///          "type": "number"
-    ///        },
-    ///        "baromrelin": {
-    ///          "type": "number"
-    ///        },
-    ///        "dailyrainin": {
-    ///          "type": "number"
-    ///        },
-    ///        "date": {
-    ///          "type": "string",
-    ///          "format": "date-time"
-    ///        },
-    ///        "dateutc": {
-    ///          "type": "number"
-    ///        },
-    ///        "dewPoint": {
-    ///          "type": "number"
-    ///        },
-    ///        "feelsLike": {
-    ///          "type": "number"
-    ///        },
-    ///        "hourlyrainin": {
-    ///          "type": "number"
-    ///        },
-    ///        "humidity": {
-    ///          "type": "number"
-    ///        },
-    ///        "humidityin": {
-    ///          "type": "number"
-    ///        },
-    ///        "maxdailygust": {
-    ///          "type": "number"
-    ///        },
-    ///        "monthlyrainin": {
-    ///          "type": "number"
-    ///        },
-    ///        "tempf": {
-    ///          "type": "number"
-    ///        },
-    ///        "tempinf": {
-    ///          "type": "number"
-    ///        },
-    ///        "winddir": {
-    ///          "type": "number"
-    ///        },
-    ///        "winddir_avg10m": {
-    ///          "type": "number"
-    ///        },
-    ///        "winddir_avg2m": {
-    ///          "type": "number"
-    ///        },
-    ///        "windgustdir": {
-    ///          "type": "number"
-    ///        },
-    ///        "windgustmph": {
-    ///          "type": "number"
-    ///        },
-    ///        "windspdmph_avg10m": {
-    ///          "type": "number"
-    ///        },
-    ///        "windspdmph_avg2m": {
-    ///          "type": "number"
-    ///        },
-    ///        "windspeedmph": {
-    ///          "type": "number"
-    ///        },
-    ///        "yearlyrainin": {
-    ///          "type": "number"
-    ///        }
-    ///      }
-    ///    },
-    ///    "macAddress": {
-    ///      "type": "string"
-    ///    }
-    ///  }
-    ///}
+    /**{
+  "type": "object",
+  "properties": {
+    "info": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "lastData": {
+      "type": "object",
+      "properties": {
+        "baromabsin": {
+          "type": "number"
+        },
+        "baromrelin": {
+          "type": "number"
+        },
+        "dailyrainin": {
+          "type": "number"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dateutc": {
+          "type": "number"
+        },
+        "dewPoint": {
+          "type": "number"
+        },
+        "feelsLike": {
+          "type": "number"
+        },
+        "hourlyrainin": {
+          "type": "number"
+        },
+        "humidity": {
+          "type": "number"
+        },
+        "humidityin": {
+          "type": "number"
+        },
+        "maxdailygust": {
+          "type": "number"
+        },
+        "monthlyrainin": {
+          "type": "number"
+        },
+        "tempf": {
+          "type": "number"
+        },
+        "tempinf": {
+          "type": "number"
+        },
+        "winddir": {
+          "type": "number"
+        },
+        "winddir_avg10m": {
+          "type": "number"
+        },
+        "winddir_avg2m": {
+          "type": "number"
+        },
+        "windgustdir": {
+          "type": "number"
+        },
+        "windgustmph": {
+          "type": "number"
+        },
+        "windspdmph_avg10m": {
+          "type": "number"
+        },
+        "windspdmph_avg2m": {
+          "type": "number"
+        },
+        "windspeedmph": {
+          "type": "number"
+        },
+        "yearlyrainin": {
+          "type": "number"
+        }
+      }
+    },
+    "macAddress": {
+      "type": "string"
+    }
+  }
+}*/
     /// ```
     /// </details>
     #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -161,17 +127,17 @@ pub mod types {
     /// <details><summary>JSON schema</summary>
     ///
     /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "properties": {
-    ///    "location": {
-    ///      "type": "string"
-    ///    },
-    ///    "name": {
-    ///      "type": "string"
-    ///    }
-    ///  }
-    ///}
+    /**{
+  "type": "object",
+  "properties": {
+    "location": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    }
+  }
+}*/
     /// ```
     /// </details>
     #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -191,81 +157,81 @@ pub mod types {
     /// <details><summary>JSON schema</summary>
     ///
     /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "properties": {
-    ///    "baromabsin": {
-    ///      "type": "number"
-    ///    },
-    ///    "baromrelin": {
-    ///      "type": "number"
-    ///    },
-    ///    "dailyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "date": {
-    ///      "type": "string",
-    ///      "format": "date-time"
-    ///    },
-    ///    "dateutc": {
-    ///      "type": "number"
-    ///    },
-    ///    "dewPoint": {
-    ///      "type": "number"
-    ///    },
-    ///    "feelsLike": {
-    ///      "type": "number"
-    ///    },
-    ///    "hourlyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "humidity": {
-    ///      "type": "number"
-    ///    },
-    ///    "humidityin": {
-    ///      "type": "number"
-    ///    },
-    ///    "maxdailygust": {
-    ///      "type": "number"
-    ///    },
-    ///    "monthlyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "tempf": {
-    ///      "type": "number"
-    ///    },
-    ///    "tempinf": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir_avg10m": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir_avg2m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windgustdir": {
-    ///      "type": "number"
-    ///    },
-    ///    "windgustmph": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspdmph_avg10m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspdmph_avg2m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspeedmph": {
-    ///      "type": "number"
-    ///    },
-    ///    "yearlyrainin": {
-    ///      "type": "number"
-    ///    }
-    ///  }
-    ///}
+    /**{
+  "type": "object",
+  "properties": {
+    "baromabsin": {
+      "type": "number"
+    },
+    "baromrelin": {
+      "type": "number"
+    },
+    "dailyrainin": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dateutc": {
+      "type": "number"
+    },
+    "dewPoint": {
+      "type": "number"
+    },
+    "feelsLike": {
+      "type": "number"
+    },
+    "hourlyrainin": {
+      "type": "number"
+    },
+    "humidity": {
+      "type": "number"
+    },
+    "humidityin": {
+      "type": "number"
+    },
+    "maxdailygust": {
+      "type": "number"
+    },
+    "monthlyrainin": {
+      "type": "number"
+    },
+    "tempf": {
+      "type": "number"
+    },
+    "tempinf": {
+      "type": "number"
+    },
+    "winddir": {
+      "type": "number"
+    },
+    "winddir_avg10m": {
+      "type": "number"
+    },
+    "winddir_avg2m": {
+      "type": "number"
+    },
+    "windgustdir": {
+      "type": "number"
+    },
+    "windgustmph": {
+      "type": "number"
+    },
+    "windspdmph_avg10m": {
+      "type": "number"
+    },
+    "windspdmph_avg2m": {
+      "type": "number"
+    },
+    "windspeedmph": {
+      "type": "number"
+    },
+    "yearlyrainin": {
+      "type": "number"
+    }
+  }
+}*/
     /// ```
     /// </details>
     #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -328,81 +294,81 @@ pub mod types {
     /// <details><summary>JSON schema</summary>
     ///
     /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "properties": {
-    ///    "baromabsin": {
-    ///      "type": "number"
-    ///    },
-    ///    "baromrelin": {
-    ///      "type": "number"
-    ///    },
-    ///    "dailyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "date": {
-    ///      "type": "string",
-    ///      "format": "date-time"
-    ///    },
-    ///    "dateutc": {
-    ///      "type": "number"
-    ///    },
-    ///    "dewPoint": {
-    ///      "type": "number"
-    ///    },
-    ///    "feelsLike": {
-    ///      "type": "number"
-    ///    },
-    ///    "hourlyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "humidity": {
-    ///      "type": "number"
-    ///    },
-    ///    "humidityin": {
-    ///      "type": "number"
-    ///    },
-    ///    "maxdailygust": {
-    ///      "type": "number"
-    ///    },
-    ///    "monthlyrainin": {
-    ///      "type": "number"
-    ///    },
-    ///    "tempf": {
-    ///      "type": "number"
-    ///    },
-    ///    "tempinf": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir_avg10m": {
-    ///      "type": "number"
-    ///    },
-    ///    "winddir_avg2m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windgustdir": {
-    ///      "type": "number"
-    ///    },
-    ///    "windgustmph": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspdmph_avg10m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspdmph_avg2m": {
-    ///      "type": "number"
-    ///    },
-    ///    "windspeedmph": {
-    ///      "type": "number"
-    ///    },
-    ///    "yearlyrainin": {
-    ///      "type": "number"
-    ///    }
-    ///  }
-    ///}
+    /**{
+  "type": "object",
+  "properties": {
+    "baromabsin": {
+      "type": "number"
+    },
+    "baromrelin": {
+      "type": "number"
+    },
+    "dailyrainin": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dateutc": {
+      "type": "number"
+    },
+    "dewPoint": {
+      "type": "number"
+    },
+    "feelsLike": {
+      "type": "number"
+    },
+    "hourlyrainin": {
+      "type": "number"
+    },
+    "humidity": {
+      "type": "number"
+    },
+    "humidityin": {
+      "type": "number"
+    },
+    "maxdailygust": {
+      "type": "number"
+    },
+    "monthlyrainin": {
+      "type": "number"
+    },
+    "tempf": {
+      "type": "number"
+    },
+    "tempinf": {
+      "type": "number"
+    },
+    "winddir": {
+      "type": "number"
+    },
+    "winddir_avg10m": {
+      "type": "number"
+    },
+    "winddir_avg2m": {
+      "type": "number"
+    },
+    "windgustdir": {
+      "type": "number"
+    },
+    "windgustmph": {
+      "type": "number"
+    },
+    "windspdmph_avg10m": {
+      "type": "number"
+    },
+    "windspdmph_avg2m": {
+      "type": "number"
+    },
+    "windspeedmph": {
+      "type": "number"
+    },
+    "yearlyrainin": {
+      "type": "number"
+    }
+  }
+}*/
     /// ```
     /// </details>
     #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -554,7 +520,6 @@ impl Client {
         "1.0.0"
     }
 }
-#[allow(clippy::all)]
 impl Client {
     /**List User's Devices
 
@@ -575,8 +540,7 @@ Arguments:
         let mut query = Vec::with_capacity(2usize);
         query.push(("apiKey", api_key.to_string()));
         query.push(("applicationKey", application_key.to_string()));
-        #[allow(unused_mut)]
-        let mut request = self
+        let request = self
             .client
             .get(url)
             .header(
@@ -612,7 +576,7 @@ Arguments:
         api_key: &'a str,
         application_key: &'a str,
         end_date: Option<&'a chrono::DateTime<chrono::offset::Utc>>,
-        limit: Option<f64>,
+        limit: Option<i64>,
     ) -> Result<ResponseValue<Vec<types::QueryDeviceDataResponseItem>>, Error<()>> {
         let url = format!(
             "{}/v1/devices/{}", self.baseurl, encode_path(& mac_address.to_string()),
@@ -626,8 +590,7 @@ Arguments:
         if let Some(v) = &limit {
             query.push(("limit", v.to_string()));
         }
-        #[allow(unused_mut)]
-        let mut request = self
+        let request = self
             .client
             .get(url)
             .header(
@@ -645,7 +608,6 @@ Arguments:
         }
     }
 }
-/// Items consumers will typically use such as the Client.
 pub mod prelude {
     pub use super::Client;
 }
